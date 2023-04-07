@@ -5,7 +5,7 @@ name: ci-test
 
 on:
   push:
-    branches: [ "main" ] // this event will trigger work flow 
+    branches: [ "main" ] 
   pull_request:
     branches: [ "main" ]
 
