@@ -12,10 +12,27 @@ on:
 jobs:
 
   test:
-    runs-on: test
+    name: test
+    runs-on: ubuntu-lastest
+    
+     # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres:15.2
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: simplebank
+        
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
-    - uses: actions/checkout@v3
-
     - name: Set up Go 1.x
       uses: actions/setup-go@v3
       with:
@@ -24,6 +41,9 @@ jobs:
     
     - name: Check out code into the Go midule directory 
       uses: actions/checkout@v2
+
+    - name: Run migrations
+      run: migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up
 
     
     - name: Test
